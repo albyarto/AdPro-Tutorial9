@@ -41,4 +41,13 @@ Pada saat menjalankan perintah cargo run pada program publisher, lima event (2x 
 
 ---
 
+### Monitoring chart based on publisher
+
+![image](https://github.com/user-attachments/assets/f50bb6a7-50c9-4fda-9ba6-25ad49f61dab)
+
+Ketika publisher mengirimkan event, terlihat ada spike (2 spike karena 2x run) yang terjadi pada grafik yang menunjukkan aktivitas di channel. Spike ini terjadi karena message broker harus memproses sejumlah besar pesan dalam waktu singkat, yang menghasilkan peningkatan dalam jumlah koneksi dan aktivitas pada broker. Dengan menjalankan publisher secara berulang, kita dapat melihat bagaimana RabbitMQ mengelola beban pesan dan bagaimana sistem menangani lonjakan traffic secara dinamis. Grafik ini memberikan gambaran tentang bagaimana message broker merespons beban yang ditimbulkan oleh publisher yang mengirimkan banyak event.
+
+---
+
+
 
