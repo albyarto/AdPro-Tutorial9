@@ -32,3 +32,13 @@ URL “amqp\://guest\:guest\@localhost:5672” yang digunakan baik pada program 
 
 ---
 
+### Sending and processing event
+
+![image](https://github.com/user-attachments/assets/72d4c720-8b74-4d0d-83b5-e2d8e9a96383)
+![image](https://github.com/user-attachments/assets/6a6f0eea-5040-4d72-967d-bde68120c09b)
+
+Pada saat menjalankan perintah cargo run pada program publisher, lima event (2x cargo run maka = 10 event) dikirimkan ke message broker (RabbitMQ). Setiap event berisi informasi terkait dengan pembuatan pengguna baru (misalnya user_id dan user_name). Event-event ini kemudian diterima dan diproses oleh subscriber yang sudah terhubung dengan queue yang sama di RabbitMQ. Proses ini memungkinkan komunikasi antar program dengan menggunakan sistem berbasis message queue, yang memastikan bahwa pesan diproses secara terpisah dan async. Di console subscriber, kita bisa melihat bagaimana pesan-pesan ini diterima dan diproses sesuai dengan handler yang sudah didefinisikan.
+
+---
+
+
