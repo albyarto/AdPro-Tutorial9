@@ -37,7 +37,7 @@ URL “amqp\://guest\:guest\@localhost:5672” yang digunakan baik pada program 
 ![image](https://github.com/user-attachments/assets/72d4c720-8b74-4d0d-83b5-e2d8e9a96383)
 ![image](https://github.com/user-attachments/assets/6a6f0eea-5040-4d72-967d-bde68120c09b)
 
-Pada saat menjalankan perintah cargo run pada program publisher, lima event (2x cargo run maka = 10 event) dikirimkan ke message broker (RabbitMQ). Setiap event berisi informasi terkait dengan pembuatan pengguna baru (misalnya user_id dan user_name). Event-event ini kemudian diterima dan diproses oleh subscriber yang sudah terhubung dengan queue yang sama di RabbitMQ. Proses ini memungkinkan komunikasi antar program dengan menggunakan sistem berbasis message queue, yang memastikan bahwa pesan diproses secara terpisah dan async. Di console subscriber, kita bisa melihat bagaimana pesan-pesan ini diterima dan diproses sesuai dengan handler yang sudah didefinisikan.
+Pada saat menjalankan perintah `cargo run` pada program publisher, lima event (2x `cargo run` maka = 10 event) dikirimkan ke message broker (RabbitMQ). Setiap event berisi informasi terkait dengan pembuatan pengguna baru (misalnya user_id dan user_name). Event-event ini kemudian diterima dan diproses oleh subscriber yang sudah terhubung dengan queue yang sama di RabbitMQ. Proses ini memungkinkan komunikasi antar program dengan menggunakan sistem berbasis message queue, yang memastikan bahwa pesan diproses secara terpisah dan async. Di console subscriber, kita bisa melihat bagaimana pesan-pesan ini diterima dan diproses sesuai dengan handler yang sudah didefinisikan.
 
 ---
 
@@ -53,9 +53,20 @@ Ketika publisher mengirimkan event, terlihat ada spike (2 spike karena 2x run) y
 
 ![image](https://github.com/user-attachments/assets/2e500f6c-79e2-41fb-bd84-f98bd14c05b3)
 
-Pada simulasi ini, saya mengubah subscriber menjadi lebih lambat dengan menambahkan delay 1 detik setiap kali memproses pesan. Setelah melakukan perubahan ini, saya menjalankan perintah cargo run pada program publisher sebanyak 8 kali dengan cepat. Setiap kali publisher dijalankan, pesan-pesan baru dikirimkan ke message broker dan masuk ke queue RabbitMQ. Karena subscriber sekarang memiliki delay, pesan-pesan tersebut tidak dapat langsung diproses dan akan menumpuk di queue.
+Pada simulasi ini, saya mengubah subscriber menjadi lebih lambat dengan menambahkan delay 1 detik setiap kali memproses pesan. Setelah melakukan perubahan ini, saya menjalankan perintah `cargo run` pada program publisher sebanyak 8 kali dengan cepat. Setiap kali publisher dijalankan, pesan-pesan baru dikirimkan ke message broker dan masuk ke queue RabbitMQ. Karena subscriber sekarang memiliki delay, pesan-pesan tersebut tidak dapat langsung diproses dan akan menumpuk di queue.
 
 Setelah menjalankan publisher sebanyak 8 kali, saya memeriksa grafik di RabbitMQ dan menemukan bahwa jumlah queue saya mencapai sekitar 25 pesan. Hal ini terjadi karena publisher terus mengirimkan pesan dengan cepat, sementara subscriber yang lambat hanya dapat memproses satu pesan setiap detiknya, sehingga antrean semakin panjang seiring waktu. Dalam situasi seperti ini, message broker (RabbitMQ) menyimpan pesan-pesan tersebut sementara menunggu subscriber untuk memprosesnya satu per satu.
 
 ---
+
+### Running three subscribers
+
+![image](https://github.com/user-attachments/assets/69a00cc5-4c25-4dc6-8ef0-52b2a8de9cc7)
+![image](https://github.com/user-attachments/assets/35d4eea0-ce5d-424e-ac11-fe485bf12166)
+
+Dalam simulasi ini, saya menjalankan tiga instance subscriber secara paralel, masing-masing dijalankan di console yang berbeda. Setiap subscriber terhubung ke queue yang sama dan bertugas untuk memproses event secara bersamaan. Saya kembali menjalankan perintah `cargo run` pada publisher sebanyak 8 kali secara cepat untuk mensimulasikan spike permintaan.
+
+Hasilnya, saya mengamati bahwa jumlah queue pesan di RabbitMQ hanya mencapai sekitar 7 hingga 8 pesan saja, jauh lebih sedikit dibandingkan sebelumnya ketika hanya ada satu subscriber (yang mencapai sekitar 25). Hal ini terjadi karena beberapa subscriber dapat memproses pesan secara paralel, sehingga penumpukan pesan pada queue dapat segera dikurangi. Ini mencerminkan salah satu kekuatan dari arsitektur event-driven, yaitu kemampuannya untuk melakukan horizontal scaling pada sisi subscriber untuk menangani beban yang tinggi.
+
+Berdasarkan pengamatan kode, salah satu hal yang dapat ditingkatkan adalah penggunaan thread pool atau asynchronous processing agar proses konsumsi pesan lebih efisien dan tidak dibatasi oleh blocking `thread::sleep`. Selain itu, menambahkan sistem logging yang lebih informatif juga dapat membantu dalam monitoring dan debugging saat sistem dijalankan dalam skala besar.
 
