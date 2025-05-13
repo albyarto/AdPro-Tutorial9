@@ -27,3 +27,8 @@ URL “amqp\://guest\:guest\@localhost:5672” yang digunakan baik pada program 
 
 ---
 
+### Screenshot of Running RabbitMQ
+![image](https://github.com/user-attachments/assets/a9aa833e-0b0b-4166-89c6-3fe93bd54b64)
+
+---
+
