@@ -49,5 +49,13 @@ Ketika publisher mengirimkan event, terlihat ada spike (2 spike karena 2x run) y
 
 ---
 
+### Simulation slow subscriber
 
+![image](https://github.com/user-attachments/assets/2e500f6c-79e2-41fb-bd84-f98bd14c05b3)
+
+Pada simulasi ini, saya mengubah subscriber menjadi lebih lambat dengan menambahkan delay 1 detik setiap kali memproses pesan. Setelah melakukan perubahan ini, saya menjalankan perintah cargo run pada program publisher sebanyak 8 kali dengan cepat. Setiap kali publisher dijalankan, pesan-pesan baru dikirimkan ke message broker dan masuk ke queue RabbitMQ. Karena subscriber sekarang memiliki delay, pesan-pesan tersebut tidak dapat langsung diproses dan akan menumpuk di queue.
+
+Setelah menjalankan publisher sebanyak 8 kali, saya memeriksa grafik di RabbitMQ dan menemukan bahwa jumlah queue saya mencapai sekitar 25 pesan. Hal ini terjadi karena publisher terus mengirimkan pesan dengan cepat, sementara subscriber yang lambat hanya dapat memproses satu pesan setiap detiknya, sehingga antrean semakin panjang seiring waktu. Dalam situasi seperti ini, message broker (RabbitMQ) menyimpan pesan-pesan tersebut sementara menunggu subscriber untuk memprosesnya satu per satu.
+
+---
 
